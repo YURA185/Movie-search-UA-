@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Твій портал кіно UA!</title>
+    <style>
+        /* Стилі для всієї сторінки */
+        body {
+            color: #ffffff;
+            background-image: url('images/depositphotos_208200302-stock-photo-neon-sign-brick-wall-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: sans-serif;
+        }
+
+        /* Контейнер для основного контенту */
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Стилі для списку фільмів */
+        #movies {
+            display: none;
+        }
+
+        .movie-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
+        }
+
+        .movie {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            min-height: 350px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .movie img {
+            max-width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .movie h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Стилі для кнопок оцінки */
+        .rating-buttons {
+            display: flex;
+            justify-content: space-around; /* Рівномірний розподіл кнопок */
+            width: 100%; /* Щоб кнопки займали всю ширину контейнера */
+            margin-top: 10px;
+        }
+
+        .rating-buttons button {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            color: #ffffff;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rating-buttons button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .rating-buttons .like-btn.active {
+            background-color: rgba(0, 255, 0, 0.5);
+        }
+
+        .rating-buttons .dislike-btn.active {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .rating-buttons span {
+            font-size: 0.9em;
+        }
+
+        /* Стилі для головної сторінки з картою */
+        #home {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        #home h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            width: 100%;
+        }
+
+        .map-container {
+            width: 100%;
+            max-width: 400px;
+            border: 5px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .map-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .map-description {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 0 0 10px 10px;
+            text-align: left;
+            font-size: 1em;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .home-text {
+            flex: 1;
+            max-width: 600px;
+            text-align: left;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Стилі для сторінки "Про нас" */
+        #about {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #about h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .about-content {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Стилі для сторінки "Контакти" */
+        #contact {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #contact h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .contact-content {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .contact-content h3 {
+            margin-top: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .contact-map {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 5px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .contact-map iframe {
+            width: 100%;
+            height: 400px;
+            border: 0;
+        }
+
+        /* Стилі для хедера */
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        header nav ul li a {
+            text-decoration: none;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-size: 1.3em;
+            transition: color 0.3s ease;
+        }
+
+        header nav ul li a:hover {
+            color: #ddd;
+        }
+
+        /* Стилі для футера */
+        footer {
+            flex-shrink: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        footer nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        footer nav ul li a {
+            text-decoration: none;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+
+        footer nav ul li a:hover {
+            color: #ddd;
+        }
+
+        /* Стилі для новин */
+        #news {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+        #news h2 {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(181, 46, 46, 0.5);
+        }
+
+        #news ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 600px;
+        }
+
+        #news .news-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #news .news-item img {
+            max-width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        #news .news-item p {
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>КіноПортал</h1>
+        <nav>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showHome()">Головна</a></li>
+                <li><a href="javascript:void(0)" onclick="showMovies()">Фільми</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h2>Ласкаво просимо до Порталу твого кіно UA!</h2>
+            <div class="map-container">
+                <img src="IMAGES2.0/Головна jpg.jpg">
+                <div class="map-description">
+                    <p>Твій портал кіно UA — це ресурс, який дозволяє кіноманам зручно знайомитись з останніми новинками кіноіндустрії.</p>
+                </div>
+            </div>
+            <div class="home-text">
+                <p>Твій портал кіно UA — це ресурс, який дозволяє кіноманам зручно знайомитись з останніми новинками кіноіндустрії, переглядати фільми та отримувати огляди про популярні кінопрем'єри. Сайт надає користувачам актуальну інформацію про новини зі світу кіно, а також доступ до різноманітних колекцій фільмів за жанрами.</p>
+                <p>Перейдіть до розділу <a href="javascript:void(0)" onclick="showMovies()" style="color: #ddd; text-decoration: underline;">"Фільми"</a>, щоб переглянути нашу колекцію.</p>
+            </div>
+        </section>
+
+        <section id="movies">
+            <h2>Популярні фільми</h2>
+            <div class="movie-list">
+            </div>
+        </section>
+
+        <Ascertainly section id="news">
+            <h2>Цікаві новини про світ кінофільмів</h2>
+            <ul>
+                <li class="news-item">
+                    <img src="IMAGES2.0/1.jpg" alt="Новина 1">
+                    <p>Нове кіно від Marvel: Старт зйомок нового фільму Avengers.</p>
+                </li>
+                <li class="news-item">
+                    <img src="IMAGES2.0/2.jpg" alt="Новина 2">
+                    <p>Відкриття кіноринку у Каннах: Розгляд нових проектів від голлівудських зірок.</p>
+                </li>
+                <li class="news-item">
+                    <img src="IMAGES2.0/3.jpg" alt="Новина 3">
+                    <p>Анонс продовження культового фільму "Матриця 4": Чого очікувати фанатам?</p>
+                </li>
+                <li class="news-item">
+                    <img src="IMAGES2.0/4.jpg" alt="Новина 4">
+                    <p>Інтерв'ю з режисером Оскарового фільму 2023 року "Титан": Нові перспективи кіноіндустрії.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section id="about">
+            <h2>Про нас</h2>
+            <div class="about-content">
+                <p>Ласкаво просимо до <strong>КіноПорталу</strong> — вашого надійного провідника у світі кіно! Ми — команда ентузіастів, які прагнуть зробити кінематограф доступним і зручним для кожного українця.</p>
+                <p>Наш сайт створений для того, щоб ви могли легко знаходити найсвіжіші новинки кіноіндустрії, переглядати огляди популярних фільмів, дізнаватися про прем’єри та отримувати актуальні новини зі світу кінематографа. Ми також пропонуємо зручний доступ до колекцій фільмів, розподілених за жанрами, щоб кожен кіноман знайшов щось до душі.</p>
+                <p>Наша місія — популяризувати українське кіно та підтримувати інтерес до світових кінематографічних шедеврів. Ми віримо, що кіно здатне об’єднувати людей, надихати та дарувати незабутні емоції.</p>
+                <p>Долучайтеся до нашої спільноти кінолюбителів і відкривайте для себе нові горизонти разом із КіноПорталом!</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Контакти</h2>
+            <div class="contact-content">
+                <h3>Контактна інформація про сайт</h3>
+                <p>Сайт: <a href="https://kinoportal.ua" style="color: #ddd; text-decoration: underline;">kinoportal.ua</a></p>
+                <p>Email: uracerar@gmail.com</p>
+                <p>Телефон: +380688471801</p>
+                <p>Адреса: вул. Соборна, 24, м. Вінниця, 21050, Україна</p>
+
+                <h3>Контактні дані виконавця</h3>
+                <p>Виконавець: Черар Юрій</p>
+                <p>Ініціали: Ю. С.</p>
+                <p>Email: uracerar@gmail.com</p>
+                <p>Телефон: +38 (068) 847-18-01</p>
+
+                <h3>Карта міста Вінниця</h3>
+                <div class="contact-map">
+                    <iframe src="Synced with Google Maps embed link" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showAbout()">Про нас</a></li>
+                <li><a href="javascript:void(0)" onclick="showContact()">Контакти</a></li>
+            </ul>
+        </nav>
+    </footer>
+
+    <script>
+        // Функція для показу головної сторінки
+        function showHome() {
+            document.getElementById('home').style.display = 'flex';
+            document.getElementById('movies').style.display = 'none';
+            document.getElementById('news').style.display = 'none';
+            document.getElementById('about').style.display = 'none';
+            document.getElementById('contact').style.display = 'none';
+        }
+
+        // Функція для показу фільмів
+        function showMovies() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('movies').style.display = 'block';
+            document.getElementById('news').style.display = 'none';
+            document.getElementById('about').style.display = 'none';
+            document.getElementById('contact').style.display = 'none';
+
+            // Завантажуємо список фільмів, якщо він ще не завантажений
+            const movieListContainer = document.querySelector('#movies .movie-list');
+            if (movieListContainer.innerHTML.trim() === '') {
+                // Оновлений список із 50 фільмів із локальними зображеннями
+                const movies = [
+                    { title: "Бджоляр", image: "IMAGES/1.jpg" },
+                    { title: "Втеча з Шоушенка", image: "IMAGES/2.jpg" },
+                    { title: "Зелена миля", image: "IMAGES/3.jpg" },
+                    { title: "Початок", image: "IMAGES/4.jpg" },
+                    { title: "Інтерстеллар", image: "IMAGES/5.jpg" },
+                    { title: "Матриця", image: "IMAGES/6.jpg" },
+                    { title: "Володар перснів", image: "IMAGES/7.jpg" },
+                    { title: "Темний лицар", image: "IMAGES/8.jpg" },
+                    { title: "Гладіатор", image: "IMAGES/9.jpg" },
+                    { title: "Титанік", image: "IMAGES/10.jpg" },
+                    { title: "Аватар", image: "IMAGES/11.jpg" },
+                    { title: "Пірати Карибського моря", image: "IMAGES/12.jpg" },
+                    { title: "Список Шиндлера", image: "IMAGES/13.jpg" },
+                    { title: "Бійцівський клуб", image: "IMAGES/14.jpg" },
+                    { title: "Мовчання ягнят", image: "IMAGES/15.jpg" },
+                    { title: "Сім", image: "IMAGES/16.jpg" },
+                    { title: "Престиж", image: "IMAGES/17.jpg" },
+                    { title: "Паразити", image: "IMAGES/18.jpg" },
+                    { title: "Джокер", image: "IMAGES/19.jpg" },
+                    { title: "1917", image: "IMAGES/20.jpg" },
+                    { title: "Шалений Макс", image: "IMAGES/21.jpg" },
+                    { title: "Гравітація", image: "IMAGES/22.jpg" },
+                    { title: "Ла-Ла Ленд", image: "IMAGES/23.jpg" },
+                    { title: "Острів проклятих", image: "IMAGES/24.jpg" },
+                    { title: "Дюна", image: "IMAGES/25.jpg" },
+                    { title: "Слов'яни", image: "IMAGES/26.jpg" },
+                    { title: "Сяйво", image: "IMAGES/27.jpg" },
+                    { title: "Кримінальне чтиво", image: "IMAGES/28.jpg" },
+                    { title: "Великий Гетсбі", image: "IMAGES/29.jpg" },
+                    { title: "Хрещений батько", image: "IMAGES/30.jpg" },
+                    { title: "Запах жінки", image: "IMAGES/31.jpg" },
+                    { title: "Вовк з Уолл-стріт", image: "IMAGES/32.jpg" },
+                    { title: "Соціальна мережа", image: "IMAGES/33.jpg" },
+                    { title: "Мільйонер із нетрів", image: "IMAGES/34.jpg" },
+                    { title: "Король Лев", image: "IMAGES/35.jpg" },
+                    { title: "Назад у майбутнє", image: "IMAGES/36.jpg" },
+                    { title: "Останній король", image: "IMAGES/37.jpg" },
+                    { title: "Чужий", image: "IMAGES/38.jpg" },
+                    { title: "Термінатор 2", image: "IMAGES/39.jpg" },
+                    { title: "Міцний горішок", image: "IMAGES/40.jpg" },
+                    { title: "Таксі Марсель", image: "IMAGES/41.jpg" },
+                    { title: "Останні лицарі", image: "IMAGES/42.jpg" },
+                    { title: "Реквієм за мрією", image: "IMAGES/43.jpg" },
+                    { title: "Загублені", image: "IMAGES/44.jpg" },
+                    { title: "12 мавп", image: "IMAGES/45.jpg" },
+                    { title: "Великий куш", image: "IMAGES/46.jpg" },
+                    { title: "Малхолланд Драйв", image: "IMAGES/47.jpg" },
+                    { title: "Старим тут не місце", image: "IMAGES/48.jpg" },
+                    { title: "Дорога", image: "IMAGES/49.jpg" },
+                    { title: "Форсаж 9", image: "IMAGES/50.jpg" }
+                ];
+
+                movies.forEach((movie, index) => {
+                    const movieElement = document.createElement('div');
+                    movieElement.classList.add('movie');
+                    movieElement.innerHTML = `
+                        <img src="${movie.image}" alt="${movie.title}">
+                        <h3>${movie.title}</h3>
+                        <div class="rating-buttons">
+                            <button class="like-btn" data-id="${index}">
+                                👍 <span class="like-count">0</span>
+                            </button>
+                            <button class="dislike-btn" data-id="${index}">
+                                👎 <span class="dislike-count">0</span>
+                            </button>
+                        </div>
+                    `;
+                    movieListContainer.appendChild(movieElement);
+                });
+
+                // Додаємо обробники подій для кнопок
+                initializeRatingButtons();
+            }
+        }
+
+        // Функція для показу сторінки "Про нас"
+        function showAbout() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('movies').style.display = 'none';
+            document.getElementById('news').style.display = 'none';
+            document.getElementById('about').style.display = 'block';
+            document.getElementById('contact').style.display = 'none';
+        }
+
+        // Функція для показу сторінки "Контакти"
+        function showContact() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('movies').style.display = 'none';
+            document.getElementById('news').style.display = 'none';
+            document.getElementById('about').style.display = 'none';
+            document.getElementById('contact').style.display = 'block';
+        }
+
+        // Функція для ініціалізації кнопок оцінки
+        function initializeRatingButtons() {
+            const likeButtons = document.querySelectorAll('.like-btn');
+            const dislikeButtons = document.querySelectorAll('.dislike-btn');
+
+            // Завантажуємо збережені оцінки з localStorage
+            likeButtons.forEach(button => {
+                const movieId = button.getAttribute('data-id');
+                const likes = localStorage.getItem(`likes-${movieId}`) || 0;
+                const userLiked = localStorage.getItem(`user-liked-${movieId}`);
+                button.querySelector('.like-count').textContent = likes;
+                if (userLiked === 'true') {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    const currentLikes = parseInt(button.querySelector('.like-count').textContent);
+                    const userLiked = localStorage.getItem(`user-liked-${movieId}`);
+                    const userDisliked = localStorage.getItem(`user-disliked-${movieId}`);
+                    const dislikeButton = document.querySelector(`.dislike-btn[data-id="${movieId}"]`);
+
+                    if (userLiked === 'true') {
+                        // Користувач вже лайкнув, знімаємо лайк
+                        button.querySelector('.like-count').textContent = currentLikes - 1;
+                        localStorage.setItem(`likes-${movieId}`, currentLikes - 1);
+                        localStorage.setItem(`user-liked-${movieId}`, 'false');
+                        button.classList.remove('active');
+                    } else {
+                        // Додаємо лайк
+                        button.querySelector('.like-count').textContent = currentLikes + 1;
+                        localStorage.setItem(`likes-${movieId}`, currentLikes + 1);
+                        localStorage.setItem(`user-liked-${movieId}`, 'true');
+                        button.classList.add('active');
+
+                        // Якщо був дизлайк, знімаємо його
+                        if (userDisliked === 'true') {
+                            const currentDislikes = parseInt(dislikeButton.querySelector('.dislike-count').textContent);
+                            dislikeButton.querySelector('.dislike-count').textContent = currentDislikes - 1;
+                            localStorage.setItem(`dislikes-${movieId}`, currentDislikes - 1);
+                            localStorage.setItem(`user-disliked-${movieId}`, 'false');
+                            dislikeButton.classList.remove('active');
+                        }
+                    }
+                });
+            });
+
+            dislikeButtons.forEach(button => {
+                const movieId = button.getAttribute('data-id');
+                const dislikes = localStorage.getItem(`dislikes-${movieId}`) || 0;
+                const userDisliked = localStorage.getItem(`user-disliked-${movieId}`);
+                button.querySelector('.dislike-count').textContent = dislikes;
+                if (userDisliked === 'true') {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    const currentDislikes = parseInt(button.querySelector('.dislike-count').textContent);
+                    const userDisliked = localStorage.getItem(`user-disliked-${movieId}`);
+                    const userLiked = localStorage.getItem(`user-liked-${movieId}`);
+                    const likeButton = document.querySelector(`.like-btn[data-id="${movieId}"]`);
+
+                    if (userDisliked === 'true') {
+                        // Користувач вже дизлайкнув, знімаємо дизлайк
+                        button.querySelector('.dislike-count').textContent = currentDislikes - 1;
+                        localStorage.setItem(`dislikes-${movieId}`, currentDislikes - 1);
+                        localStorage.setItem(`user-disliked-${movieId}`, 'false');
+                        button.classList.remove('active');
+                    } else {
+                        // Додаємо дизлайк
+                        button.querySelector('.dislike-count').textContent = currentDislikes + 1;
+                        localStorage.setItem(`dislikes-${movieId}`, currentDislikes + 1);
+                        localStorage.setItem(`user-disliked-${movieId}`, 'true');
+                        button.classList.add('active');
+
+                        // Якщо був лайк, знімаємо його
+                        if (userLiked === 'true') {
+                            const currentLikes = parseInt(likeButton.querySelector('.like-count').textContent);
+                            likeButton.querySelector('.like-count').textContent = currentLikes - 1;
+                            localStorage.setItem(`likes-${movieId}`, currentLikes - 1);
+                            localStorage.setItem(`user-liked-${movieId}`, 'false');
+                            likeButton.classList.remove('active');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Початковий стан сторінки (показуємо головну)
+        showHome();
+    </script>
+</body>
+</html>
